@@ -6,6 +6,7 @@ from pathlib import Path
 import albumentations as A
 import cv2
 import numpy as np
+import yaml
 from matplotlib.axes import Axes
 from sklearn.model_selection import train_test_split
 
@@ -55,6 +56,10 @@ def a_horizontal_flip() -> A.Compose:
 
 def a_rotate(angle) -> A.Compose:
     return A.Compose([A.Affine(rotate=angle, always_apply=True)], bbox_params=BBOX_PARAMS)
+
+
+def a_shear(angle_x, angle_y) -> A.Compose:
+    return A.Compose([A.Affine(shear={'x': angle_x, 'y': angle_y}, always_apply=True)], bbox_params=BBOX_PARAMS)
 
 
 def a_rain() -> A.Compose:
@@ -123,6 +128,12 @@ def visualize_bbox(image: Image, bbox: BBox, name: str, color: tuple[int, int, i
 
 
 def reset_axes(ax: Axes):
+    ax.grid(visible=False)
     ax.tick_params(top=False, bottom=False, left=False, right=False, labelleft=False, labelbottom=False)
     ax.spines[:].set_visible(False)
     return ax
+
+
+def write_yaml(path: Path, data: dict):
+    with open(path, 'w') as f:
+        yaml.dump(data, stream=f)
