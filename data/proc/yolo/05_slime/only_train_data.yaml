@@ -1,0 +1,8 @@
+names:
+- slime
+nc: 1
+train: &id001
+- /content/data/proc/yolo/05_slime/train/images
+- /content/data/proc/yolo/05_slime/valid/images
+- /content/data/proc/yolo/05_slime/test/images
+val: *id001

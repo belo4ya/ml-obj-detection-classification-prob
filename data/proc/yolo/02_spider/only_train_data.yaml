@@ -1,0 +1,8 @@
+names:
+- spider
+nc: 1
+train: &id001
+- /content/data/proc/yolo/02_spider/train/images
+- /content/data/proc/yolo/02_spider/valid/images
+- /content/data/proc/yolo/02_spider/test/images
+val: *id001

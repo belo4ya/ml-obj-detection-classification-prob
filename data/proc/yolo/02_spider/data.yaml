@@ -1,0 +1,6 @@
+names:
+- spider
+nc: 1
+test: /content/data/proc/yolo/02_spider/test/images
+train: /content/data/proc/yolo/02_spider/train/images
+val: /content/data/proc/yolo/02_spider/valid/images

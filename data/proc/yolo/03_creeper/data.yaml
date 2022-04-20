@@ -1,0 +1,6 @@
+names:
+- creeper
+nc: 1
+test: /content/data/proc/yolo/03_creeper/test/images
+train: /content/data/proc/yolo/03_creeper/train/images
+val: /content/data/proc/yolo/03_creeper/valid/images

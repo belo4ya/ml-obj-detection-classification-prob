@@ -1,0 +1,8 @@
+names:
+- skeleton
+nc: 1
+train: &id001
+- /content/data/proc/yolo/01_skeleton/train/images
+- /content/data/proc/yolo/01_skeleton/valid/images
+- /content/data/proc/yolo/01_skeleton/test/images
+val: *id001

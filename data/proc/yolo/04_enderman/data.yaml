@@ -1,0 +1,6 @@
+names:
+- enderman
+nc: 1
+test: /content/data/proc/yolo/04_enderman/test/images
+train: /content/data/proc/yolo/04_enderman/train/images
+val: /content/data/proc/yolo/04_enderman/valid/images

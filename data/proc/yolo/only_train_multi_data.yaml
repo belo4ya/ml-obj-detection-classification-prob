@@ -1,0 +1,46 @@
+names:
+- zombie
+- skeleton
+- spider
+- creeper
+- enderman
+- slime
+nc: 6
+train:
+- /content/data/proc/yolo/00_zombie/train/images
+- /content/data/proc/yolo/00_zombie/valid/images
+- /content/data/proc/yolo/00_zombie/test/images
+- /content/data/proc/yolo/01_skeleton/train/images
+- /content/data/proc/yolo/01_skeleton/valid/images
+- /content/data/proc/yolo/01_skeleton/test/images
+- /content/data/proc/yolo/02_spider/train/images
+- /content/data/proc/yolo/02_spider/valid/images
+- /content/data/proc/yolo/02_spider/test/images
+- /content/data/proc/yolo/03_creeper/train/images
+- /content/data/proc/yolo/03_creeper/valid/images
+- /content/data/proc/yolo/03_creeper/test/images
+- /content/data/proc/yolo/04_enderman/train/images
+- /content/data/proc/yolo/04_enderman/valid/images
+- /content/data/proc/yolo/04_enderman/test/images
+- /content/data/proc/yolo/05_slime/train/images
+- /content/data/proc/yolo/05_slime/valid/images
+- /content/data/proc/yolo/05_slime/test/images
+val:
+- /content/data/proc/yolo/00_zombie/train/images
+- /content/data/proc/yolo/00_zombie/valid/images
+- /content/data/proc/yolo/00_zombie/test/images
+- /content/data/proc/yolo/01_skeleton/train/images
+- /content/data/proc/yolo/01_skeleton/valid/images
+- /content/data/proc/yolo/01_skeleton/test/images
+- /content/data/proc/yolo/02_spider/train/images
+- /content/data/proc/yolo/02_spider/valid/images
+- /content/data/proc/yolo/02_spider/test/images
+- /content/data/proc/yolo/03_creeper/train/images
+- /content/data/proc/yolo/03_creeper/valid/images
+- /content/data/proc/yolo/03_creeper/test/images
+- /content/data/proc/yolo/04_enderman/train/images
+- /content/data/proc/yolo/04_enderman/valid/images
+- /content/data/proc/yolo/04_enderman/test/images
+- /content/data/proc/yolo/05_slime/train/images
+- /content/data/proc/yolo/05_slime/valid/images
+- /content/data/proc/yolo/05_slime/test/images

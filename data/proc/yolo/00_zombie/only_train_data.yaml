@@ -1,0 +1,8 @@
+names:
+- zombie
+nc: 1
+train: &id001
+- /content/data/proc/yolo/00_zombie/train/images
+- /content/data/proc/yolo/00_zombie/valid/images
+- /content/data/proc/yolo/00_zombie/test/images
+val: *id001
