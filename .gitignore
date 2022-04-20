@@ -8,5 +8,5 @@ venv39/
 yolov5
 yolov5s.pt
 
-data/
-out/
+data/raw
+#out/
