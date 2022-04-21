@@ -1,0 +1,6 @@
+zombie
+skeleton
+spider
+creeper
+enderman
+slime

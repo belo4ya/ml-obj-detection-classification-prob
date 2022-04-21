@@ -1,0 +1,13 @@
+names:
+- zombie
+- skeleton
+- spider
+- creeper
+- enderman
+- slime
+nc: 6
+train: &id001
+- /content/dist/labels/yolo/train/images
+- /content/dist/labels/yolo/valid/images
+- /content/dist/labels/yolo/test/images
+val: *id001
