@@ -1,6 +1,0 @@
-names:
-- skeleton
-nc: 1
-test: /content/data/proc/yolo/01_skeleton/test/images
-train: /content/data/proc/yolo/01_skeleton/train/images
-val: /content/data/proc/yolo/01_skeleton/valid/images

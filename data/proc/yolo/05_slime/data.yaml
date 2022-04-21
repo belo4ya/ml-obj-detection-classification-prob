@@ -1,6 +1,0 @@
-names:
-- slime
-nc: 1
-test: /content/data/proc/yolo/05_slime/test/images
-train: /content/data/proc/yolo/05_slime/train/images
-val: /content/data/proc/yolo/05_slime/valid/images

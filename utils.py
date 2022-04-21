@@ -7,7 +7,9 @@ import albumentations as A
 import cv2
 import numpy as np
 import yaml
+from matplotlib import pyplot as plt
 from matplotlib.axes import Axes
+from matplotlib.figure import Figure
 from sklearn.model_selection import train_test_split
 
 Image = np.ndarray
@@ -100,6 +102,10 @@ def train_valid_test_split(*arrays, train_size, valid_size, **kwargs):
     )))
 
 
+def color_palette(palette: list[tuple[int, int, int]], mobs: list[str]):
+    return lambda mob: palette[mobs.index(mob)]
+
+
 def visualize_bbox(image: Image, bbox: BBox, name: str, color: tuple[int, int, int] = BOX_COLOR, thickness=2):
     img = image.copy()
     img_h, img_w = img.shape[0], img.shape[1]
@@ -114,7 +120,7 @@ def visualize_bbox(image: Image, bbox: BBox, name: str, color: tuple[int, int, i
     cv2.rectangle(img, (x_min, y_min), (x_max, y_max), color=color, thickness=thickness)
 
     ((text_width, text_height), _) = cv2.getTextSize(name, cv2.FONT_HERSHEY_SIMPLEX, 0.6, 1)
-    cv2.rectangle(img, (x_min, y_min - int(1.3 * text_height)), (x_min + text_width, y_min), BOX_COLOR, -1)
+    cv2.rectangle(img, (x_min, y_min - int(1.3 * text_height)), (x_min + text_width, y_min), color, -1)
     cv2.putText(
         img,
         text=name,
@@ -137,3 +143,34 @@ def reset_axes(ax: Axes):
 def write_yaml(path: Path, data: dict):
     with open(path, 'w') as f:
         yaml.dump(data, stream=f)
+
+
+class Mosaic:
+
+    def __init__(self, layout: str):
+        self.layout = layout
+        self.nimages = len(set(layout)) - 2
+
+        _layout = layout.strip().replace(' ', '').split('\n')
+        self.w = len(_layout[0])
+        self.h = len(_layout)
+
+        self.fig = None
+
+    def plot(self, images: list[Image], fig_width: float = 15, title_kwargs: dict = None):
+        self.fig: Figure = plt.figure(figsize=(fig_width, fig_width / (self.w / self.h)))
+        self.fig.subplots_adjust(hspace=0.00, wspace=0.00)
+
+        if title_kwargs:
+            self.fig.suptitle(title_kwargs['title'], y=title_kwargs['y'])
+
+        axes = list(self.fig.subplot_mosaic(self.layout).values())
+        for i in range(self.nimages):
+            ax = axes[i]
+            reset_axes(ax)
+            ax.imshow(images[i], aspect='auto')
+
+    def __repr__(self):
+        return f'Mosaic: w={self.w}, h={self.h}, nimages={self.nimages}{self.layout}'
+
+    __str__ = __repr__

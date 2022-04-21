@@ -1,8 +1,0 @@
-names:
-- enderman
-nc: 1
-train: &id001
-- /content/data/proc/yolo/04_enderman/train/images
-- /content/data/proc/yolo/04_enderman/valid/images
-- /content/data/proc/yolo/04_enderman/test/images
-val: *id001

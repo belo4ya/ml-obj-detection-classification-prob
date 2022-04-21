@@ -1,6 +1,0 @@
-names:
-- zombie
-nc: 1
-test: /content/data/proc/yolo/00_zombie/test/images
-train: /content/data/proc/yolo/00_zombie/train/images
-val: /content/data/proc/yolo/00_zombie/valid/images
