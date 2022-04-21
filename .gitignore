@@ -8,8 +8,7 @@ venv39/
 /yolov5/
 yolov5s.pt
 
-data/raw
-new_data/videos/
-new_data/images/720/
+data/videos/
+data/images/720/
 
 dist/labels/hand/.fixed/
