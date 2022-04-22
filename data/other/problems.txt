@@ -1,0 +1,15 @@
+00_zombie_03_savanna_1_12.jpg
+02_spider_01_plains_1_00.jpg
+02_spider_01_plains_1_04.jpg
+02_spider_01_plains_1_05.jpg
+02_spider_01_plains_1_53.jpg
+02_spider_01_plains_1_63.jpg
+02_spider_02_savanna_0_44.jpg
+02_spider_02_savanna_0_69.jpg
+02_spider_02_savanna_0_70.jpg
+02_spider_06_snowy_0_28.jpg
+02_spider_07_snowy_1_63.jpg
+02_spider_07_snowy_1_64.jpg
+03_creeper_02_savanna_0_69.jpg
+04_enderman_02_savanna_0_68.jpg
+04_enderman_05_desert_1_18.jpg

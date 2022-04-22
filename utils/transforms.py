@@ -52,14 +52,14 @@ def transform(transform_: A.Compose, img: np.ndarray, cls: int, bbox: BBox) -> t
 def crop_bbox_rect(img: np.ndarray, bbox: BBox, pad=0) -> np.ndarray:
     w, h = get_wh(img)
     xyxy = bbox.xyxy(w=w, h=h)
-    return plots.save_one_box(xyxy, img, pad=pad, gain=1, save=False, BGR=False, square=True)
+    return plots.save_one_box(xyxy, img, pad=pad, gain=1, save=False, BGR=True, square=True)
 
 
 def crop_bbox_constant(img: np.ndarray, bbox: BBox, pad=0) -> np.ndarray:
     w, h = get_wh(img)
     xyxy = bbox.xyxy(w=w, h=h)
 
-    img = plots.save_one_box(xyxy, img, pad=pad, gain=1, save=False, BGR=False, square=False)
+    img = plots.save_one_box(xyxy, img, pad=pad, gain=1, save=False, BGR=True, square=False)
     w, h = get_wh(img)
 
     a = max(h, w)

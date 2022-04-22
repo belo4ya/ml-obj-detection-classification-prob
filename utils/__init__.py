@@ -29,3 +29,13 @@ def train_valid_test_split(*arrays, train_size, valid_size, **kwargs):
         [split[i] for i in range(0, len(split), 2)],
         [split[i] for i in range(1, len(split), 2)]
     )))
+
+
+def write_problems(path: Path, problems: list[str]):
+    with open(path, 'w') as f:
+        f.write('\n'.join(problems))
+
+
+def load_problems(path: Path) -> list[str]:
+    with open(path) as f:
+        return [i.strip() for i in f]

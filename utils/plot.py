@@ -86,4 +86,6 @@ def reset_axes(ax: Axes):
     ax.grid(visible=False)
     ax.tick_params(top=False, bottom=False, left=False, right=False, labelleft=False, labelbottom=False)
     ax.spines[:].set_visible(False)
+    ax.set_xmargin(20)
+    ax.set_ymargin(20)
     return ax
