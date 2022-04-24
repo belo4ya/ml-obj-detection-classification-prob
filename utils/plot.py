@@ -85,7 +85,10 @@ def visualize_bbox(image: np.ndarray, bbox: BBox, name: str, color: Tuple[int, i
 def reset_axes(ax: Axes):
     ax.grid(visible=False)
     ax.tick_params(top=False, bottom=False, left=False, right=False, labelleft=False, labelbottom=False)
-    ax.spines[:].set_visible(False)
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    ax.spines['bottom'].set_visible(False)
+    ax.spines['left'].set_visible(False)
     ax.set_xmargin(20)
     ax.set_ymargin(20)
     return ax
