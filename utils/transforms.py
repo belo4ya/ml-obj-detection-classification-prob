@@ -1,3 +1,5 @@
+from typing import Tuple
+
 import albumentations as A
 import numpy as np
 from yolov5.utils import plots
@@ -36,7 +38,7 @@ def a_shear(angle_x, angle_y) -> A.Compose:
     return A.Compose([A.Affine(shear={'x': angle_x, 'y': angle_y}, always_apply=True)], bbox_params=BBOX_PARAMS)
 
 
-def transform(transform_: A.Compose, img: np.ndarray, cls: int, bbox: BBox) -> tuple[np.ndarray, int, BBox]:
+def transform(transform_: A.Compose, img: np.ndarray, cls: int, bbox: BBox) -> Tuple[np.ndarray, int, BBox]:
     transformed = transform_(
         image=img,
         labels=[cls],

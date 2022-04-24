@@ -1,7 +1,6 @@
-from __future__ import annotations
-
 from itertools import chain
 from pathlib import Path
+from typing import Dict, List
 
 import yaml
 from sklearn.model_selection import train_test_split
@@ -12,7 +11,7 @@ from utils.plot import *
 from utils.transforms import *
 
 
-def write_yaml(path: Path, data: dict):
+def write_yaml(path: Path, data: Dict):
     with open(path, 'w') as f:
         yaml.dump(data, stream=f)
 
@@ -31,11 +30,11 @@ def train_valid_test_split(*arrays, train_size, valid_size, **kwargs):
     )))
 
 
-def write_problems(path: Path, problems: list[str]):
+def write_problems(path: Path, problems: List[str]):
     with open(path, 'w') as f:
         f.write('\n'.join(problems))
 
 
-def load_problems(path: Path) -> list[str]:
+def load_problems(path: Path) -> List[str]:
     with open(path) as f:
         return [i.strip() for i in f]

@@ -4,6 +4,7 @@ __pycache__/
 
 venv/
 venv39/
+venv38/
 
 /yolov5/
 yolov5s.pt

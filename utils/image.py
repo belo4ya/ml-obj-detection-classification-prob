@@ -1,7 +1,5 @@
-from __future__ import annotations
-
 from pathlib import Path
-from typing import Literal
+from typing import Literal, Tuple, Union
 
 import cv2
 import numpy as np
@@ -15,7 +13,7 @@ __all__ = [
 
 RGB = Literal['RGB']
 BGR = Literal['BGR']
-Mode = BGR | RGB
+Mode = Union[BGR, RGB]
 
 
 class Image:
@@ -37,7 +35,7 @@ class Image:
         return self.data.shape[0]
 
     @classmethod
-    def open(cls, path: Path, mode: Mode = RGB) -> Image:
+    def open(cls, path: Path, mode: Mode = RGB) -> 'Image':
         data = cv2.imread(str(path))
         if mode == RGB:
             return cls(cv2.cvtColor(data, cv2.COLOR_BGR2RGB), mode, path)
@@ -49,7 +47,7 @@ class Image:
         else:
             cv2.imwrite(str(path), self.data)
 
-    def convert(self, mode: Mode) -> Image:
+    def convert(self, mode: Mode) -> 'Image':
         if mode == self.mode:
             data = self.data
         elif mode == BGR:
@@ -60,6 +58,6 @@ class Image:
         return Image(data, mode, self.path)
 
 
-def get_wh(img: np.ndarray) -> tuple[int, int]:
+def get_wh(img: np.ndarray) -> Tuple[int, int]:
     h, w, _ = img.shape
     return w, h

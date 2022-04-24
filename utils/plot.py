@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, List, Tuple
 
 import cv2
 import matplotlib.pyplot as plt
@@ -22,10 +22,10 @@ TEXT_COLOR = (255, 255, 255)
 
 class ColorPalette:
 
-    def __init__(self, colors: list[tuple[int, int, int]], ids: list[Any]):
+    def __init__(self, colors: List[Tuple[int, int, int]], ids: List[Any]):
         self._palette = dict(zip(ids, colors))
 
-    def get(self, id_: Any) -> tuple[int, int, int]:
+    def get(self, id_: Any) -> Tuple[int, int, int]:
         return self._palette[id_]
 
 
@@ -41,14 +41,14 @@ class Mosaic:
 
         self.fig = None
 
-    def plot(self, images: list[np.ndarray], fig_width: float = 15, title_kwargs: dict = None):
+    def plot(self, images: List[np.ndarray], fig_width: float = 15, title_kwargs: dict = None):
         self.fig: Figure = plt.figure(figsize=(fig_width, fig_width / (self.w / self.h)))
         self.fig.subplots_adjust(hspace=0.00, wspace=0.00)
 
         if title_kwargs:
             self.fig.suptitle(title_kwargs['title'], y=title_kwargs['y'])
 
-        axes: list[Axes] = list(self.fig.subplot_mosaic(self.layout).values())
+        axes: List[Axes] = list(self.fig.subplot_mosaic(self.layout).values())
         for i in range(self.nimages):
             ax = axes[i]
             reset_axes(ax)
@@ -60,7 +60,7 @@ class Mosaic:
     __str__ = __repr__
 
 
-def visualize_bbox(image: np.ndarray, bbox: BBox, name: str, color: tuple[int, int, int] = BOX_COLOR, thickness=2):
+def visualize_bbox(image: np.ndarray, bbox: BBox, name: str, color: Tuple[int, int, int] = BOX_COLOR, thickness=2):
     img = image.copy()
     img_w, img_h = get_wh(img)
 

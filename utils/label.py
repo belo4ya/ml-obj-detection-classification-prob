@@ -1,6 +1,5 @@
-from __future__ import annotations
-
 from pathlib import Path
+from typing import Tuple
 
 import albumentations as A
 
@@ -12,13 +11,13 @@ __all__ = [
 
 class Label:
 
-    def __init__(self, cls: int, bbox: BBox, path: Path = None):
+    def __init__(self, cls: int, bbox: 'BBox', path: Path = None):
         self.cls = cls
         self.bbox = bbox
         self.path = path
 
     @classmethod
-    def open(cls, path: Path) -> Label:
+    def open(cls, path: Path) -> 'Label':
         with open(path) as f:
             label = f.readline().strip().split()
         return Label(int(label[0]), BBox(*map(float, label[1:5])), path=path)
@@ -42,7 +41,7 @@ class BBox:
         self.rows = img_h
         self.cols = img_w
 
-    def xyxy(self, w: int = None, h: int = None) -> tuple[float, float, float, float]:
+    def xyxy(self, w: int = None, h: int = None) -> Tuple[float, float, float, float]:
         rows = h or self.rows
         cols = w or self.cols
         return A.convert_bbox_from_albumentations(
@@ -50,7 +49,7 @@ class BBox:
             target_format='pascal_voc', rows=rows, cols=cols
         )
 
-    def xywh(self, w: int = None, h: int = None) -> tuple[float, float, float, float]:
+    def xywh(self, w: int = None, h: int = None) -> Tuple[float, float, float, float]:
         rows = h or self.rows
         cols = w or self.cols
         return A.convert_bbox_from_albumentations(
