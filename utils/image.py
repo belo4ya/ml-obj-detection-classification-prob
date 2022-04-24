@@ -1,5 +1,10 @@
 from pathlib import Path
-from typing import Literal, Tuple, Union
+from typing import Tuple, Union
+
+try:
+    from typing import Literal
+except ImportError:
+    from typing_extensions import Literal
 
 import cv2
 import numpy as np
