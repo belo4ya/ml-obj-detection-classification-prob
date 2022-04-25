@@ -10,5 +10,6 @@ venv38/
 yolov5s.pt
 
 data/videos/
+data/images/720/
 
 dist/labels/hand/.fixed/
