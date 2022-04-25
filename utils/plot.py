@@ -60,7 +60,12 @@ class Mosaic:
     __str__ = __repr__
 
 
-def visualize_bbox(image: np.ndarray, bbox: BBox, name: str, color: Tuple[int, int, int] = BOX_COLOR, thickness=2):
+def visualize_bbox(
+        image: np.ndarray,
+        bbox: BBox, name: str = None,
+        color: Tuple[int, int, int] = BOX_COLOR,
+        thickness=2
+) -> np.ndarray:
     img = image.copy()
     img_w, img_h = get_wh(img)
 
@@ -68,17 +73,18 @@ def visualize_bbox(image: np.ndarray, bbox: BBox, name: str, color: Tuple[int, i
 
     cv2.rectangle(img, (x_min, y_min), (x_max, y_max), color=color, thickness=thickness)
 
-    ((text_width, text_height), _) = cv2.getTextSize(name, cv2.FONT_HERSHEY_SIMPLEX, 0.6, 1)
-    cv2.rectangle(img, (x_min, y_min - int(1.3 * text_height)), (x_min + text_width, y_min), color, -1)
-    cv2.putText(
-        img,
-        text=name,
-        org=(x_min, y_min - int(0.3 * text_height)),
-        fontFace=cv2.FONT_HERSHEY_SIMPLEX,
-        fontScale=0.6,
-        color=TEXT_COLOR,
-        lineType=cv2.LINE_AA,
-    )
+    if name:
+        ((text_width, text_height), _) = cv2.getTextSize(name, cv2.FONT_HERSHEY_SIMPLEX, 0.6, 1)
+        cv2.rectangle(img, (x_min, y_min - int(1.3 * text_height)), (x_min + text_width, y_min), color, -1)
+        cv2.putText(
+            img,
+            text=name,
+            org=(x_min, y_min - int(0.3 * text_height)),
+            fontFace=cv2.FONT_HERSHEY_SIMPLEX,
+            fontScale=0.6,
+            color=TEXT_COLOR,
+            lineType=cv2.LINE_AA,
+        )
     return img
 
 

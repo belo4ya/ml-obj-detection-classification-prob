@@ -13,6 +13,7 @@ __all__ = [
     'a_rotate',
     'a_shear',
     'transform',
+    'crop',
     'crop_bbox_rect',
     'crop_bbox_constant',
 ]
@@ -50,6 +51,11 @@ def transform(transform_: A.Compose, img: np.ndarray, cls: int, bbox: BBox) -> T
 
 
 # ---- bbox
+
+def crop(img: np.ndarray, bbox: BBox) -> np.ndarray:
+    xyxy = [int(i) for i in bbox.xyxy(*get_wh(img))]
+    return img[xyxy[1]:xyxy[3], xyxy[0]:xyxy[2]]
+
 
 def crop_bbox_rect(img: np.ndarray, bbox: BBox, pad=0) -> np.ndarray:
     w, h = get_wh(img)

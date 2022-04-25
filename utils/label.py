@@ -6,6 +6,8 @@ import albumentations as A
 __all__ = [
     'Label',
     'BBox',
+    'xywh2xywhn',
+    'xyxy2xywhn',
 ]
 
 
@@ -56,3 +58,21 @@ class BBox:
             A.convert_bbox_to_albumentations(self.xywhn, source_format='yolo', rows=rows, cols=cols),
             target_format='coco', rows=rows, cols=cols
         )
+
+
+def xywh2xywhn(x: Tuple[int, int, int, int], w: int, h: int) -> Tuple[float, float, float, float]:
+    return A.convert_bbox_from_albumentations(
+        A.convert_bbox_to_albumentations(x, source_format='coco', rows=h, cols=w),
+        target_format='yolo',
+        rows=h,
+        cols=w,
+    )
+
+
+def xyxy2xywhn(x: Tuple[int, int, int, int], w: int, h: int) -> Tuple[float, float, float, float]:
+    return A.convert_bbox_from_albumentations(
+        A.convert_bbox_to_albumentations(x, source_format='pascal_voc', rows=h, cols=w),
+        target_format='yolo',
+        rows=h,
+        cols=w,
+    )
