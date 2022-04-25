@@ -3,8 +3,10 @@ from typing import Any, List, Tuple
 import cv2
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
+import seaborn as sns
 from matplotlib.axes import Axes
-from matplotlib.figure import Figure
+from matplotlib.figure import Figure, SubFigure
 
 from utils.image import get_wh
 from utils.label import BBox
@@ -14,6 +16,8 @@ __all__ = [
     'Mosaic',
     'visualize_bbox',
     'reset_axes',
+    'plot_grid',
+    'plot_probability_grid'
 ]
 
 BOX_COLOR = (255, 0, 0)
@@ -90,11 +94,102 @@ def visualize_bbox(
 
 def reset_axes(ax: Axes):
     ax.grid(visible=False)
-    ax.tick_params(top=False, bottom=False, left=False, right=False, labelleft=False, labelbottom=False)
+    ax.tick_params(
+        top=False,
+        bottom=False,
+        left=False,
+        right=False,
+        labelleft=False,
+        labelbottom=False,
+        labelright=False,
+        labeltop=False
+    )
     ax.spines['top'].set_visible(False)
     ax.spines['right'].set_visible(False)
     ax.spines['bottom'].set_visible(False)
     ax.spines['left'].set_visible(False)
-    ax.set_xmargin(20)
-    ax.set_ymargin(20)
     return ax
+
+
+def plot_grid():
+    pass
+
+
+def plot_probability_grid(
+        nrows: int,
+        ncols: int,
+        idxs: np.ndarray,
+        y_true: np.ndarray,
+        y_pred: np.ndarray,
+        proba: np.ndarray,
+        decision_f: np.ndarray,
+        images: List[np.ndarray],
+        labels: List[str],
+        figsize: Tuple[float, float],
+        title: str,
+        facecolor=None,
+        style: str = None
+):
+    fig: Figure = plt.figure(figsize=figsize)
+    fig.subplots_adjust(0.1, 0.1, 0.85, 0.9, wspace=0.05, hspace=0)
+    fig.suptitle(title, y=0.95)
+
+    subfigs = fig.subfigures(nrows, ncols, facecolor=facecolor)
+
+    layout = """
+        AAB
+        AAC
+    """
+    for i, j in enumerate(idxs):
+        cls_true = y_true[j]
+        cls_pred = y_pred[j]
+        prob = proba[j]
+        decision = decision_f[j]
+        img = images[j]
+
+        row = i // ncols
+        col = i % ncols
+        subfig: SubFigure = subfigs[row, col]
+
+        if style:
+            with sns.axes_style('dark'):
+                axes: List[Axes] = list(subfig.subplot_mosaic(layout).values())
+        else:
+            axes: List[Axes] = list(subfig.subplot_mosaic(layout).values())
+
+        # img
+        if cls_true == cls_pred:
+            title = 'True'
+            title_color = sns.color_palette('deep')[2]
+        else:
+            title = 'False'
+            title_color = sns.color_palette('deep')[3]
+
+        subfig.suptitle(title, size=12, y=0.98, color=title_color)
+        img_ax = axes[0]
+        reset_axes(img_ax)
+        img_ax.imshow(img, aspect='auto')
+
+        # probability
+        prob_ax = axes[1]
+        twinx = reset_axes(prob_ax.twinx())
+        twinx.set_ylabel('probability', labelpad=15, rotation=270)
+
+        prob_data = pd.DataFrame({'prob': prob, 'mob': labels})
+        sns.barplot(data=prob_data, x='prob', y='mob', orient='h', hue_order=labels, ax=prob_ax)
+        prob_ax.tick_params(top=False, bottom=False, left=False, right=False, labelleft=False, labelbottom=False)
+        prob_ax.set_xlabel('')
+        prob_ax.set_ylabel('')
+
+        # decision function
+        decision_ax = axes[2]
+        twinx = reset_axes(decision_ax.twinx())
+        twinx.set_ylabel('decision f', labelpad=15, rotation=270)
+
+        decision_data = pd.DataFrame({'decision': decision, 'mob': labels})
+        sns.barplot(data=decision_data, x='decision', y='mob', orient='h', hue_order=labels, ax=decision_ax)
+        decision_ax.tick_params(top=False, bottom=False, left=False, right=False, labelleft=False, labelbottom=False)
+        decision_ax.set_xlabel('')
+        decision_ax.set_ylabel('')
+
+    return fig
