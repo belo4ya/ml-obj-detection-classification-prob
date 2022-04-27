@@ -63,7 +63,7 @@ def crop_bbox_rect(img: np.ndarray, bbox: BBox, pad=0) -> np.ndarray:
     return plots.save_one_box(xyxy, img, pad=pad, gain=1, save=False, BGR=True, square=True)
 
 
-def crop_bbox_constant(img: np.ndarray, bbox: BBox, pad=0) -> np.ndarray:
+def crop_bbox_constant(img: np.ndarray, bbox: BBox, pad: float = 0, constant: int = 0) -> np.ndarray:
     w, h = get_wh(img)
     xyxy = bbox.xyxy(w=w, h=h)
 
@@ -75,4 +75,4 @@ def crop_bbox_constant(img: np.ndarray, bbox: BBox, pad=0) -> np.ndarray:
     tpad = (a - h) // 2
     pads = ((tpad, (a - h) - tpad), (lpad, (a - w) - lpad), (0, 0))
 
-    return np.pad(img, pad_width=pads)
+    return np.pad(img, pad_width=pads, constant_values=constant)

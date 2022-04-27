@@ -1,4 +1,5 @@
-from typing import Any, List, Tuple
+from pathlib import Path
+from typing import Any, List, Tuple, Union
 
 import cv2
 import matplotlib.pyplot as plt
@@ -12,16 +13,31 @@ from utils.image import get_wh
 from utils.label import BBox
 
 __all__ = [
+    'savefig',
+    'rectsize',
     'ColorPalette',
     'Mosaic',
     'visualize_bbox',
     'reset_axes',
     'plot_grid',
-    'plot_probability_grid'
+    'plot_probability_grid',
 ]
+
+plt.rcParams['figure.dpi'] = 100
+plt.rcParams['savefig.dpi'] = 300
 
 BOX_COLOR = (255, 0, 0)
 TEXT_COLOR = (255, 255, 255)
+
+
+def rectsize(width: float, nrows: int, ncols: int) -> Tuple[float, float]:
+    return width, width / (ncols / nrows)
+
+
+def savefig(path: Union[str, Path], fig: Figure, bbox_inches='tight', pad_inches=1 / 3, **kwargs):
+    kwargs['bbox_inches'] = bbox_inches
+    kwargs['pad_inches'] = pad_inches
+    fig.savefig(str(path), **kwargs)
 
 
 class ColorPalette:
@@ -43,20 +59,21 @@ class Mosaic:
         self.w = len(_layout[0])
         self.h = len(_layout)
 
-        self.fig = None
+    def plot(self, images: List[np.ndarray], fig_width: float = 15, title: str = None, title_kw: dict = None) -> Figure:
+        fig: Figure = plt.figure(figsize=rectsize(fig_width, self.h, self.w))
+        fig.subplots_adjust(left=0.1, bottom=0.1, right=0.9, top=0.9, hspace=0.00, wspace=0.00)
 
-    def plot(self, images: List[np.ndarray], fig_width: float = 15, title_kwargs: dict = None):
-        self.fig: Figure = plt.figure(figsize=(fig_width, fig_width / (self.w / self.h)))
-        self.fig.subplots_adjust(hspace=0.00, wspace=0.00)
+        if title:
+            title_kw = title_kw or {}
+            fig.suptitle(title, **title_kw)
 
-        if title_kwargs:
-            self.fig.suptitle(title_kwargs['title'], y=title_kwargs['y'])
-
-        axes: List[Axes] = list(self.fig.subplot_mosaic(self.layout).values())
+        axes: List[Axes] = list(fig.subplot_mosaic(self.layout).values())
         for i in range(self.nimages):
             ax = axes[i]
             reset_axes(ax)
-            ax.imshow(images[i], aspect='auto')
+            ax.imshow(images[i])
+
+        return fig
 
     def __repr__(self):
         return f'Mosaic: w={self.w}, h={self.h}, nimages={self.nimages}{self.layout}'
@@ -95,6 +112,8 @@ def visualize_bbox(
 def reset_axes(ax: Axes):
     ax.grid(visible=False)
     ax.tick_params(
+        axis='both',
+        which='both',
         top=False,
         bottom=False,
         left=False,
@@ -102,7 +121,7 @@ def reset_axes(ax: Axes):
         labelleft=False,
         labelbottom=False,
         labelright=False,
-        labeltop=False
+        labeltop=False,
     )
     ax.spines['top'].set_visible(False)
     ax.spines['right'].set_visible(False)
@@ -111,8 +130,25 @@ def reset_axes(ax: Axes):
     return ax
 
 
-def plot_grid():
-    pass
+def plot_grid(nrows: int, ncols: int, images: List[np.ndarray], title: str = None, titles: List[str] = None,
+              fig_width: float = 15) -> Figure:
+    nrows, ncols = 4, 4
+    fig, axes = plt.subplots(nrows=nrows, ncols=ncols, figsize=(fig_width, fig_width / (ncols / nrows)))
+    fig.subplots_adjust(hspace=0.12, wspace=0.1)
+    if title:
+        fig.suptitle(title, y=0.93)
+    for i, image in enumerate(images):
+        row = i // ncols
+        col = i % ncols
+        ax: Axes = axes[row, col]
+        reset_axes(ax)
+        if titles:
+            ax.set_title(titles[i][:-4], size=9)
+
+        ax.imshow(image, aspect='auto')
+
+    reset_axes(axes[3, 3])
+    return fig
 
 
 def plot_probability_grid(
@@ -126,15 +162,10 @@ def plot_probability_grid(
         images: List[np.ndarray],
         labels: List[str],
         figsize: Tuple[float, float],
-        title: str,
-        facecolor=None,
-        style: str = None
 ):
     fig: Figure = plt.figure(figsize=figsize)
-    fig.subplots_adjust(0.1, 0.1, 0.85, 0.9, wspace=0.05, hspace=0)
-    fig.suptitle(title, y=0.95)
 
-    subfigs = fig.subfigures(nrows, ncols, facecolor=facecolor)
+    subfigs = fig.subfigures(nrows, ncols)
 
     layout = """
         AAB
@@ -151,45 +182,34 @@ def plot_probability_grid(
         col = i % ncols
         subfig: SubFigure = subfigs[row, col]
 
-        if style:
-            with sns.axes_style('dark'):
-                axes: List[Axes] = list(subfig.subplot_mosaic(layout).values())
-        else:
+        with sns.axes_style('white'):
             axes: List[Axes] = list(subfig.subplot_mosaic(layout).values())
 
         # img
-        if cls_true == cls_pred:
-            title = 'True'
-            title_color = sns.color_palette('deep')[2]
-        else:
-            title = 'False'
-            title_color = sns.color_palette('deep')[3]
-
-        subfig.suptitle(title, size=12, y=0.98, color=title_color)
+        subfig.suptitle(str(cls_true == cls_pred), size=12, y=0.98)
         img_ax = axes[0]
         reset_axes(img_ax)
-        img_ax.imshow(img, aspect='auto')
+        img_ax.imshow(img)
 
         # probability
         prob_ax = axes[1]
-        twinx = reset_axes(prob_ax.twinx())
-        twinx.set_ylabel('probability', labelpad=15, rotation=270)
-
         prob_data = pd.DataFrame({'prob': prob, 'mob': labels})
+
         sns.barplot(data=prob_data, x='prob', y='mob', orient='h', hue_order=labels, ax=prob_ax)
-        prob_ax.tick_params(top=False, bottom=False, left=False, right=False, labelleft=False, labelbottom=False)
+        reset_axes(prob_ax)
         prob_ax.set_xlabel('')
-        prob_ax.set_ylabel('')
+        prob_ax.yaxis.set_label_position('right')
+        prob_ax.set_ylabel('probability', size=8, labelpad=15, rotation=270)
 
         # decision function
         decision_ax = axes[2]
-        twinx = reset_axes(decision_ax.twinx())
-        twinx.set_ylabel('decision f', labelpad=15, rotation=270)
-
         decision_data = pd.DataFrame({'decision': decision, 'mob': labels})
-        sns.barplot(data=decision_data, x='decision', y='mob', orient='h', hue_order=labels, ax=decision_ax)
-        decision_ax.tick_params(top=False, bottom=False, left=False, right=False, labelleft=False, labelbottom=False)
-        decision_ax.set_xlabel('')
-        decision_ax.set_ylabel('')
 
+        sns.barplot(data=decision_data, x='decision', y='mob', orient='h', hue_order=labels, ax=decision_ax)
+        reset_axes(decision_ax)
+        decision_ax.set_xlabel('')
+        decision_ax.yaxis.set_label_position('right')
+        decision_ax.set_ylabel('decision f', size=8, labelpad=15, rotation=270)
+
+    fig.legend(fig.axes[-1].patches, labels, bbox_to_anchor=(0.65, 0), ncol=len(labels) // 2)
     return fig
