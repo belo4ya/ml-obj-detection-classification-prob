@@ -1,19 +1,9 @@
 opencv-contrib-python
 
-# matplotlib
 seaborn
-# pandas
-# numpy
 
-# tqdm
-# PyYAML
-
-# scikit-learn
 scikit-image
 albumentations
 
-# tensorflow
-# tensorboard
-# keras
 torch
 yolov5
