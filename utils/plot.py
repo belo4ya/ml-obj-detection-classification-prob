@@ -8,6 +8,7 @@ import pandas as pd
 import seaborn as sns
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure, SubFigure
+from sklearn.model_selection import learning_curve
 
 from utils.image import get_wh
 from utils.label import BBox
@@ -19,8 +20,8 @@ __all__ = [
     'Mosaic',
     'visualize_bbox',
     'reset_axes',
-    'plot_grid',
     'plot_probability_grid',
+    'plot_learning_curve',
 ]
 
 plt.rcParams['figure.dpi'] = 100
@@ -83,7 +84,8 @@ class Mosaic:
 
 def visualize_bbox(
         image: np.ndarray,
-        bbox: BBox, name: str = None,
+        bbox: BBox,
+        name: str = None,
         color: Tuple[int, int, int] = BOX_COLOR,
         thickness=2
 ) -> np.ndarray:
@@ -128,27 +130,6 @@ def reset_axes(ax: Axes):
     ax.spines['bottom'].set_visible(False)
     ax.spines['left'].set_visible(False)
     return ax
-
-
-def plot_grid(nrows: int, ncols: int, images: List[np.ndarray], title: str = None, titles: List[str] = None,
-              fig_width: float = 15) -> Figure:
-    nrows, ncols = 4, 4
-    fig, axes = plt.subplots(nrows=nrows, ncols=ncols, figsize=(fig_width, fig_width / (ncols / nrows)))
-    fig.subplots_adjust(hspace=0.12, wspace=0.1)
-    if title:
-        fig.suptitle(title, y=0.93)
-    for i, image in enumerate(images):
-        row = i // ncols
-        col = i % ncols
-        ax: Axes = axes[row, col]
-        reset_axes(ax)
-        if titles:
-            ax.set_title(titles[i][:-4], size=9)
-
-        ax.imshow(image, aspect='auto')
-
-    reset_axes(axes[3, 3])
-    return fig
 
 
 def plot_probability_grid(
@@ -212,4 +193,93 @@ def plot_probability_grid(
         decision_ax.set_ylabel('decision f', size=8, labelpad=15, rotation=270)
 
     fig.legend(fig.axes[-1].patches, labels, bbox_to_anchor=(0.65, 0), ncol=len(labels) // 2)
+    return fig
+
+
+def plot_learning_curve(
+        estimator,
+        title,
+        X,
+        y,
+        ylim=None,
+        cv=None,
+        train_sizes=np.linspace(0.1, 1.0, 10),
+) -> Figure:
+    fig, axes = plt.subplots(1, 3, figsize=(20, 5))
+
+    axes[0].set_title(title)
+    if ylim is not None:
+        axes[0].set_ylim(*ylim)
+    axes[0].set_xlabel("training examples")
+    axes[0].set_ylabel("score")
+
+    train_sizes, train_scores, test_scores, fit_times, _ = learning_curve(
+        estimator,
+        X,
+        y,
+        cv=cv,
+        train_sizes=train_sizes,
+        return_times=True,
+    )
+    train_scores_mean = np.mean(train_scores, axis=1)
+    train_scores_std = np.std(train_scores, axis=1)
+    test_scores_mean = np.mean(test_scores, axis=1)
+    test_scores_std = np.std(test_scores, axis=1)
+    fit_times_mean = np.mean(fit_times, axis=1)
+    fit_times_std = np.std(fit_times, axis=1)
+
+    # Plot learning curve
+    # axes[0].grid()
+    axes[0].fill_between(
+        train_sizes,
+        train_scores_mean - train_scores_std,
+        train_scores_mean + train_scores_std,
+        alpha=0.1,
+        color="r",
+    )
+    axes[0].fill_between(
+        train_sizes,
+        test_scores_mean - test_scores_std,
+        test_scores_mean + test_scores_std,
+        alpha=0.1,
+        color="g",
+    )
+    axes[0].plot(
+        train_sizes, train_scores_mean, "o-", color="r", label="training score"
+    )
+    axes[0].plot(
+        train_sizes, test_scores_mean, "o-", color="g", label="cross-validation score"
+    )
+    axes[0].legend(loc="best")
+
+    # Plot n_samples vs fit_times
+    # axes[1].grid()
+    axes[1].plot(train_sizes, fit_times_mean, "o-")
+    axes[1].fill_between(
+        train_sizes,
+        fit_times_mean - fit_times_std,
+        fit_times_mean + fit_times_std,
+        alpha=0.1,
+    )
+    axes[1].set_xlabel("training examples")
+    axes[1].set_ylabel("fit times")
+    axes[1].set_title("scalability of the model")
+
+    # Plot fit_time vs score
+    fit_time_argsort = fit_times_mean.argsort()
+    fit_time_sorted = fit_times_mean[fit_time_argsort]
+    test_scores_mean_sorted = test_scores_mean[fit_time_argsort]
+    test_scores_std_sorted = test_scores_std[fit_time_argsort]
+    # axes[2].grid()
+    axes[2].plot(fit_time_sorted, test_scores_mean_sorted, "o-")
+    axes[2].fill_between(
+        fit_time_sorted,
+        test_scores_mean_sorted - test_scores_std_sorted,
+        test_scores_mean_sorted + test_scores_std_sorted,
+        alpha=0.1,
+    )
+    axes[2].set_xlabel("fit times")
+    axes[2].set_ylabel("score")
+    axes[2].set_title("performance of the model")
+
     return fig
