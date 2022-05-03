@@ -13,3 +13,5 @@ data/videos/
 data/images/720/
 
 dist/labels/hand/.fixed/
+
+paper/
